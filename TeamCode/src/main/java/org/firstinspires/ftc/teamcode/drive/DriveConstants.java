@@ -31,13 +31,6 @@ public class DriveConstants {
             MotorConfigurationType.getMotorType(NeveRest40Gearmotor.class);
 
     /*
-     * Set the first flag appropriately. If using the built-in motor velocity PID, update
-     * MOTOR_VELO_PID with the tuned coefficients from DriveVelocityPIDTuner.
-     */
-    public static final boolean RUN_USING_ENCODER = true;
-    public static final PIDCoefficients MOTOR_VELO_PID = new PIDCoefficients(0.0341, 4, 3);
-
-    /*
      * These are physical constants that can be determined from your robot (including the track
      * width; it will be tune empirically later although a rough estimate is important). Users are
      * free to chose whichever linear distance unit they would like so long as it is consistently
@@ -47,7 +40,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 2;
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 13;
+    public static double TRACK_WIDTH = 13.2;
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -60,6 +53,13 @@ public class DriveConstants {
     public static double kStatic = 0;
 
     /*
+     * Set the first flag appropriately. If using the built-in motor velocity PID, update
+     * MOTOR_VELO_PID with the tuned coefficients from DriveVelocityPIDTuner.
+     */
+    public static final boolean RUN_USING_ENCODER = true;
+    public static final PIDCoefficients MOTOR_VELO_PID = new PIDCoefficients(0.0341, 4, 6);
+
+    /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
      * the constraints should never exceed ~80% of the robot's actual capabilities. While Road
      * Runner is designed to enable faster autonomous motion, it is a good idea for testing to start
@@ -68,7 +68,7 @@ public class DriveConstants {
      * forces acceleration-limited profiling).
      */
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            30.0, 30.0, 0.0,
+            30, 30, 0.0,
             Math.toRadians(180.0), Math.toRadians(180.0), 0.0
     );
 

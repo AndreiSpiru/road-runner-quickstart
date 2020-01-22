@@ -12,6 +12,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.util.AxesSigns;
+import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 
 // Aici facem initializarea tuturor partilor robotului.
 public class robot  {
@@ -22,6 +24,7 @@ public class robot  {
 
     public DcMotor arm2 =null;
     public DcMotor arm1 =null;
+    public CRServo fnd1=null,fnd2=null;
 
     public DcMotor colectare1=null;
     public DcMotor colectare2=null;
@@ -46,6 +49,9 @@ public class robot  {
         colectare1  = hardwareMap.get(DcMotor.class, "colectare1");
         colectare2 = hardwareMap.get(DcMotor.class, "colectare2");
 
+        fnd1 = hardwareMap.get(CRServo.class,"fnd1");
+        fnd2 = hardwareMap.get(CRServo.class,"fnd1");
+
         arm2 = hardwareMap.get(DcMotor.class, "arm2");
         arm1 = hardwareMap.get(DcMotor.class, "arm1");
 
@@ -64,6 +70,7 @@ public class robot  {
         Bparameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         IMU = hardwareMap.get(BNO055IMU.class, "IMU");
         IMU.initialize(Bparameters);
+        BNO055IMUUtil.remapAxes(IMU, AxesOrder.XYZ, AxesSigns.NPN);
         angles   = IMU.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         gravity  = IMU.getGravity();
 

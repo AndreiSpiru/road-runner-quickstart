@@ -5,13 +5,13 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Webcam;
 import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveBase;
 import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveREV;
-
 import org.firstinspires.ftc.teamcode.opencvSkystoneDetector;
 import org.firstinspires.ftc.teamcode.robot;
 import org.opencv.core.Core;
@@ -34,32 +34,33 @@ import java.util.concurrent.TimeUnit;
  */
 @Config
 @Autonomous(group = "drive")
-public  class Autonomie extends LinearOpMode {
-    public static int poz = 0,tava =1;
+public  class AutonomieDe3 extends LinearOpMode {
+    public static int poz = 2,tava =0;
     public ElapsedTime runtime = new ElapsedTime();
 
     //0 means skystone, 1 means yellow stone
     //-1 for debug, but we can keep it like this because if it works, it should change to either 0 or 255
-    private static int valMid = -1;
-    private static int valLeft = -1;
-    private static int valRight = -1;
+    public static int valMid = -1;
+    public static int valLeft = -1;
+    public static int valRight = -1;
 
-    private static float rectHeight = .6f/8f;
-    private static float rectWidth = 1.5f/8f;
+    public static float rectHeight = .6f/8f;
+    public static float rectWidth = 1.5f/8f;
 
-    private static float offsetX = 0f/8f;//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive
-    private static float offsetY = 0f/8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
+    public static float offsetX = 0f/8f;//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive
+    public static float offsetY = 0f/8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
 
-    private static float[] midPos = {4f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
-    private static float[] leftPos = {2f/8f+offsetX, 4f/8f+offsetY};
-    private static float[] rightPos = {6f/8f+offsetX, 4f/8f+offsetY};
+    public static float[] midPos = {4f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
+    public static float[] leftPos = {2f/8f+offsetX, 4f/8f+offsetY};
+    public static float[] rightPos = {6f/8f+offsetX, 4f/8f+offsetY};
     //moves all rectangles right or left by amount. units are in ratio to monitor
 
-    private final int rows = 640;
-    private final int cols = 480;
+    public final int rows = 640;
+    public final int cols = 480;
 
     OpenCvCamera phoneCam;
     public CRServo fnd1=null,fnd2=null;
+    public DcMotor leftFront=null,leftBack=null,rightFront=null,rightBack=null;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -67,34 +68,31 @@ public  class Autonomie extends LinearOpMode {
 
         fnd1 = hardwareMap.get(CRServo.class,"fnd1");
         fnd2 = hardwareMap.get(CRServo.class,"fnd2");
-
-
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        leftFront  = hardwareMap.get(DcMotor.class, "leftFront");
+        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+        leftBack  = hardwareMap.get(DcMotor.class, "leftBack");
+        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+        /*int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         phoneCam.openCameraDevice();//open camera
-        phoneCam.setPipeline(new Autonomie.StageSwitchingPipeline());//different stages
+        phoneCam.setPipeline(new AutonomieDe3.StageSwitchingPipeline());//different stages
         phoneCam.startStreaming(rows, cols, OpenCvCameraRotation.UPRIGHT);//display on RC
 
 
 
         if (isStopRequested()) return;
 
-
-        telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
-        telemetry.addData("poz", poz);
-        telemetry.update();
-
-        moveClaw(-1,350);
-        moveClaw2(1,350);
-
-        waitForStart();
-        if (isStopRequested()) return;
+        boolean ok=true;
 
         if(valLeft == 0&&valMid == 255&&valRight == 255)poz=1;
         else if(valLeft == 255&&valMid == 0&&valRight == 255)poz=2;
         else if(valLeft == 255&&valMid == 255&&valRight == 0)poz=3;
         telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
-        telemetry.addData("poz", poz);
+        telemetry.addData("poz", poz);*/
+        moveClaw(-1,350);
+
+        waitForStart();
+        if (isStopRequested()) return;
         telemetry.update();
         runtime.reset();
 
@@ -102,7 +100,7 @@ public  class Autonomie extends LinearOpMode {
         if(poz == 1) {
             drive.followTrajectorySync(
                     drive.trajectoryBuilder()
-                            .splineTo(new Pose2d(27.5, 8.5, 0))
+                            .splineTo(new Pose2d(27, 8.5, 0))
                             .build()
 
             );
@@ -111,11 +109,11 @@ public  class Autonomie extends LinearOpMode {
             drive.followTrajectorySync(
                     drive.trajectoryBuilder()
                             .reverse()
-                            .forward(5)
+                            .forward(4.5)
                             .build()
 
             );
-            drive.turnSync(Math.toRadians(90));
+            drive.turnSync(Math.toRadians(91));
             drive.followTrajectorySync(
                     drive.trajectoryBuilder()
                             .forward(48)
@@ -126,14 +124,14 @@ public  class Autonomie extends LinearOpMode {
         {
             drive.followTrajectorySync(
                     drive.trajectoryBuilder()
-                            .forward(27.5)
+                            .forward(27)
                             .build()
             );
             moveClaw(-1,600);
             drive.followTrajectorySync(
                     drive.trajectoryBuilder()
                             .reverse()
-                            .forward(6.5)
+                            .forward(6)
                             .build()
             );
 
@@ -172,7 +170,7 @@ public  class Autonomie extends LinearOpMode {
             drive.followTrajectorySync(
                     drive.trajectoryBuilder()
                             .reverse()
-                            .forward(75)
+                            .forward(74)
                             .build()
             );
             drive.turnSync(Math.toRadians(-90));
@@ -189,58 +187,45 @@ public  class Autonomie extends LinearOpMode {
                             .forward(7)
                             .build()
             );
-            drive.turnSync(Math.toRadians(90));
+            drive.turnSync(Math.toRadians(91));
             if(tava == 0)
             {
-            drive.followTrajectorySync(
-                    drive.trajectoryBuilder()
-                            .forward(74)
-                            .build()
-            );
-
-                moveClaw(1,350);
-            }
-            else if(tava == 1)
-            {
-
                 drive.followTrajectorySync(
                         drive.trajectoryBuilder()
-                                .forward(102)
+                                .forward(74)
                                 .build()
                 );
 
                 moveClaw(1,350);
+
+                drive.followTrajectorySync(
+                        drive.trajectoryBuilder()
+                                .reverse()
+                                .forward(56)
+                                .build()
+                );
+
                 drive.turnSync(Math.toRadians(-90));
-
                 drive.followTrajectorySync(
                         drive.trajectoryBuilder()
-                                .forward(3)
-                                .build()
-                );
-                moveClawboth(-1,600);
-                drive.followTrajectorySync(
-                        drive.trajectoryBuilder()
-                                .reverse()
-                                .splineTo(new Pose2d(4, 72, 90))
-                                .build()
 
-                );
-                moveClawboth(1,350);
-                drive.followTrajectorySync(
-                        drive.trajectoryBuilder()
-                                .reverse()
-                                .splineTo(new Pose2d(24, 48, 90))
+                                .forward(4)
                                 .build()
-
                 );
+                moveClaw(-1,500);
+
+                drive.turnSync(Math.toRadians(103));
+                vaj(1,2000);
+                vaj(-1,500);
             }
+
         }
         else if(poz==2)
         {
             drive.followTrajectorySync(
                     drive.trajectoryBuilder()
                             .reverse()
-                            .forward(72)
+                            .forward(73.5)
                             .build()
             );
 
@@ -251,7 +236,7 @@ public  class Autonomie extends LinearOpMode {
                             .forward(7)
                             .build()
             );
-            moveClaw2(1,450);
+            moveClaw2(1,350);
             drive.followTrajectorySync(
                     drive.trajectoryBuilder()
                             .reverse()
@@ -262,47 +247,33 @@ public  class Autonomie extends LinearOpMode {
             if(tava == 0) {
                 drive.followTrajectorySync(
                         drive.trajectoryBuilder()
-                                .forward(72.5)
-                                .build()
-                );
-
-                moveClaw2(-1, 350);
-            }
-            else if(tava == 1)
-            {
-                drive.followTrajectorySync(
-                        drive.trajectoryBuilder()
-                                .forward(110)
+                                .forward(74)
                                 .build()
                 );
 
                 moveClaw2(-1,350);
+
+                drive.followTrajectorySync(
+                        drive.trajectoryBuilder()
+                                .reverse()
+                                .forward(47)
+                                .build()
+                );
+
                 drive.turnSync(Math.toRadians(-90));
-
                 drive.followTrajectorySync(
                         drive.trajectoryBuilder()
-                                .forward(3)
+
+                                .forward(5)
                                 .build()
                 );
-                moveClawboth(-1,600);
-                drive.followTrajectorySync(
-                        drive.trajectoryBuilder()
-                                .reverse()
-                                .splineTo(new Pose2d(4, 72, 90))
-                                .build()
+                moveClaw(-1,400);
 
-                );
-                moveClawboth(1,350);
-                drive.followTrajectorySync(
-                        drive.trajectoryBuilder()
-                                .reverse()
-                                .splineTo(new Pose2d(24, 48, 90))
-                                .build()
-
-                );
-
-
+                drive.turnSync(Math.toRadians(103));
+                vaj(1,1700);
+                vaj(-1,500);
             }
+
         }
 
         else if(poz==3)
@@ -310,25 +281,25 @@ public  class Autonomie extends LinearOpMode {
             drive.followTrajectorySync(
                     drive.trajectoryBuilder()
                             .reverse()
-                            .forward(76)
+                            .forward(73.5)
                             .build()
             );
 
-            drive.turnSync(Math.toRadians(-110));
+            drive.turnSync(Math.toRadians(-135));
             drive.followTrajectorySync(
                     drive.trajectoryBuilder()
 
-                            .forward(7.5)
+                            .forward(5.5)
                             .build()
             );
-            moveClaw2(1,700);
+            moveClaw2(1,350);
             drive.followTrajectorySync(
                     drive.trajectoryBuilder()
                             .reverse()
-                            .forward(9)
+                            .forward(7)
                             .build()
             );
-            drive.turnSync(Math.toRadians(113));
+            drive.turnSync(Math.toRadians(137));
             if(tava == 0) {
                 drive.followTrajectorySync(
                         drive.trajectoryBuilder()
@@ -338,43 +309,9 @@ public  class Autonomie extends LinearOpMode {
 
                 moveClaw2(-1, 350);
             }
-            else if(tava == 1)
-            {
-                drive.followTrajectorySync(
-                        drive.trajectoryBuilder()
-                                .forward(110)
-                                .build()
-                );
 
-                moveClaw2(-1,350);
-                drive.turnSync(Math.toRadians(-90));
-
-                drive.followTrajectorySync(
-                        drive.trajectoryBuilder()
-                                .forward(3)
-                                .build()
-                );
-                moveClawboth(-1,600);
-                drive.followTrajectorySync(
-                        drive.trajectoryBuilder()
-                                .reverse()
-                                .splineTo(new Pose2d(4, 72, 90))
-                                .build()
-
-                );
-                moveClawboth(1,350);
-                drive.followTrajectorySync(
-                        drive.trajectoryBuilder()
-                                .reverse()
-                                .splineTo(new Pose2d(24, 48, 90))
-                                .build()
-
-                );
-
-
-            }
         }
-        
+
     }
 
     public void moveClaw(int direction,double time)
@@ -395,12 +332,19 @@ public  class Autonomie extends LinearOpMode {
         while(runtime.time(TimeUnit.MILLISECONDS)<=time){fnd2.setPower(direction);fnd1.setPower(-direction);}
 
     }
-    public void moveClawbothAndRun(int direction,double time)
+    public void vaj(int direction,double time)
     {
         runtime.reset();
-        while(runtime.time(TimeUnit.SECONDS)<=time){fnd2.setPower(direction);fnd1.setPower(-direction);}
+        while(runtime.time(TimeUnit.MILLISECONDS)<=time) {
+            if(direction == 1)fnd2.setPower(0.3);
+            leftBack.setPower(direction);
+            leftFront.setPower(direction);
+            rightBack.setPower(direction);
+            rightFront.setPower(direction);
+        }
+
     }
-    static class StageSwitchingPipeline extends OpenCvPipeline
+    public static class StageSwitchingPipeline extends OpenCvPipeline
     {
         Mat yCbCrChan2Mat = new Mat();
         Mat thresholdMat = new Mat();
@@ -414,8 +358,8 @@ public  class Autonomie extends LinearOpMode {
             RAW_IMAGE,//displays raw view
         }
 
-        private Autonomie.StageSwitchingPipeline.Stage stageToRenderToViewport = Autonomie.StageSwitchingPipeline.Stage.detection;
-        private Autonomie.StageSwitchingPipeline.Stage[] stages = Autonomie.StageSwitchingPipeline.Stage.values();
+        public AutonomieDe3.StageSwitchingPipeline.Stage stageToRenderToViewport = AutonomieDe3.StageSwitchingPipeline.Stage.detection;
+        public AutonomieDe3.StageSwitchingPipeline.Stage[] stages = AutonomieDe3.StageSwitchingPipeline.Stage.values();
 
         @Override
         public void onViewportTapped()

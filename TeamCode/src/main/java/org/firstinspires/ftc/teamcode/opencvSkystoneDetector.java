@@ -73,6 +73,11 @@ public class opencvSkystoneDetector extends LinearOpMode {
         //width, height
         //width = height in this case, because camera is in portrait mode.
 
+        telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
+        telemetry.addData("Height", rows);
+        telemetry.addData("Width", cols);
+        telemetry.update();
+
         waitForStart();
         runtime.reset();
         while (opModeIsActive()) {

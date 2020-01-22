@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class SampleOpMode extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-    double joyScale = 0.5;
+    double joyScale = 1;
     double motorMax = 0.6;
     double position = 0;
 
@@ -98,6 +98,8 @@ public class SampleOpMode extends LinearOpMode {
                 }
             }
             else { x=false; xx=false;}
+            if(gamepad1.a)robot.fnd1.setPower(1);
+            else robot.fnd1.setPower(0);
 
             telemetry.update();
 
